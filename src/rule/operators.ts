@@ -7,7 +7,7 @@ export function equal(object: any[], value:Value): Value{
   return object.every(o => o === value);
 }
 
-export function greaterThan(object:number[], value: Value){
+export function greaterThan(object:any[], value: Value){
   if (object.length === 1) {
     return object[0] > value;
   }

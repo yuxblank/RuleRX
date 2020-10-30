@@ -12,7 +12,7 @@ export class RuleRx<T> implements RuleEvaluator<T> {
       return obs.pipe(
           map(value => {
             return this.evaluateRules(rules, value);
-          })
+          }),
         )
       })
     );

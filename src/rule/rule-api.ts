@@ -1,8 +1,8 @@
 import {Observable} from "rxjs";
 
-export interface Rule<T,K> {
+export interface Rule<T> {
   path: string;
-  operator: Operator<T, K>;
+  operator: Operator<T>;
   value: Value;
   fact: string;
 }
@@ -16,8 +16,8 @@ export interface EvaluatedRule<T> {
 
 export type Value = any[] | boolean | number | string;
 
-export type Operator<T,K> = (object: K[] | Value[], value:Value) => Value;
+export type Operator<T> = (object: T[] | Value[], value:Value) => Value;
 
 export interface RuleEvaluator<T> {
-  evaluate<K>(rules:Rule<T,K>[], ...obj : Observable<T>[]):Observable<EvaluatedRule<T>[]>
+  evaluate<K>(rules:Rule<T>[], ...obj : Observable<T>[]):Observable<EvaluatedRule<T>[]>
 }
