@@ -32,7 +32,6 @@ export class RuleRx<T> implements RuleEvaluator<T> {
         }
       }
     )
-
   }
 
 }
