@@ -1,8 +1,8 @@
 {
   "name": "rulerx",
   "version": "0.0.1",
-  "description": "",
-  "keywords": [],
+  "description": "Reactive Rule Engine",
+  "keywords": ["Reactive","Rule Engine", "RxJS"],
   "main": "dist/RuleRxumd.js",
   "module": "dist/rulerx.es5.js",
   "typings": "dist/types/rulerx.d.ts",
@@ -12,7 +12,7 @@
   "author": "Yuri Blanc <yuxblank@gmail.com>",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/yuxblank/RuleRX.git"
   },
   "license": "MIT",
   "engines": {
