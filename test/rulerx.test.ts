@@ -72,7 +72,7 @@ describe("RuleRX", () => {
     )
   })
 
-  it("RuleRX can evaluate multiple rules and apply effects when rules are met", () => {
+  it("RuleRX can evaluate multiple rules and return elements only when rules are met", (done) => {
 
     let count = 0;
     new RuleRx<{price: number, product:string, category: 'TECH'| 'FOOD' | 'TOY'}>().evaluate(
@@ -114,8 +114,12 @@ describe("RuleRX", () => {
     pipe(
       mergeMap(f => f),
        tap(x => count++),
-      finalize(() => expect(count).toEqual(1))
-    ).subscribe();
+    ).subscribe(
+      next => {
+        expect(count).toEqual(1);
+        done();
+      }
+    );
   })
 
 

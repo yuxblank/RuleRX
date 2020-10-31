@@ -60,7 +60,6 @@ export class RuleRx<T> implements RuleEvaluator<T> {
           }
         }
       )
-
     }
     return op;
   }
@@ -70,7 +69,7 @@ export class RuleRx<T> implements RuleEvaluator<T> {
       rule => {
         let scope = JSONPath({
           path: rule.path,
-          json: <any>context
+          json: context as any
         });
         return {
           fact: rule.fact,
