@@ -1,34 +1,81 @@
-import {EvaluatedRule, Rule, RuleEvaluator, Value} from "./rule-api";
-import {Observable, of} from "rxjs";
+import {EvaluatedRule, Result, Rule, RuleEvaluator, RuleSet} from "./rule-api";
+import {Observable, of, zip} from "rxjs";
 import {JSONPath} from "jsonpath-plus"
-import {map, mergeMap} from "rxjs/operators";
-import {flatMap} from "rxjs/internal/operators";
+import {map, mergeAll} from "rxjs/operators";
 
 export class RuleRx<T> implements RuleEvaluator<T> {
-  evaluate(rules: Rule<T>[], ...obj: Observable<T>[]): Observable<EvaluatedRule<T>[]> {
+  evaluate(rules: RuleSet<T>, ...contexts: Observable<T>[]): Observable<Result<T>[]> {
 
-    return of(...obj).pipe(
-      flatMap(obs => {
-      return obs.pipe(
-          map(value => {
-            return this.evaluateRules(rules, value);
-          }),
-        )
+    return zip(...contexts).pipe(
+      map((obs : any) => {
+        return this.evaluateRules(rules, obs);
       })
     );
   }
 
-  private evaluateRules(rules: Rule<T>[], value: T): EvaluatedRule<T>[] {
+  private evaluateRules(rules: RuleSet<T>, contexts: T[]): Result<T>[] {
+    let op : Result<T>[] = []
+
+    if (rules.all){
+     contexts.forEach(
+       context => {
+         // @ts-ignore
+         let evaluateRule = this.evaluateRulesOnContext(rules.all, context);
+
+         if (evaluateRule.every(r => r.value)){
+           op.push({
+             element: context,
+             rules: evaluateRule
+           })
+         }
+       }
+     )
+    }
+
+   if (rules.any){
+     contexts.forEach(
+       context => {
+         // @ts-ignore
+         let evaluateRule = this.evaluateRulesOnContext(rules.any, context);
+         if (evaluateRule.some(r => r.value)){
+           op.push({
+             element: context,
+             rules: evaluateRule
+           })
+         }
+       }
+     )
+    }
+
+    if (rules.none) {
+      contexts.forEach(
+        context => {
+          // @ts-ignore
+          let evaluateRule = this.evaluateRulesOnContext(rules.none, context);
+          if (evaluateRule.every(r => !r.value)) {
+            op.push({
+              element: context,
+              rules: evaluateRule
+            })
+          }
+        }
+      )
+
+    }
+    return op;
+  }
+
+  private evaluateRulesOnContext(rules: Rule<T>[], context: T): EvaluatedRule<T>[]{
     return rules.map(
       rule => {
         let scope = JSONPath({
           path: rule.path,
-          json: <any>value
+          json: <any>context
         });
         return {
           fact: rule.fact,
           value: rule.operator(scope, rule.value),
-          element: scope
+          element: context
         }
       }
     )

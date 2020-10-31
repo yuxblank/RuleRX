@@ -8,16 +8,28 @@ export interface Rule<T> {
 }
 
 export interface EvaluatedRule<T> {
-  value: any;
+  value: boolean;
   fact: string;
   element: T;
 }
 
+export interface Result<T> {
+  rules: EvaluatedRule<T>[];
+  element: T
+}
+
+
 
 export type Value = any[] | boolean | number | string;
 
-export type Operator<T> = (object: T[] | Value[], value:Value) => Value;
+export interface RuleSet<T> {
+  any?: Rule<T>[];
+  all?: Rule<T>[];
+  none?: Rule<T>[];
+}
+
+export type Operator<T> = (object: T[] | Value[], value:Value| any) => boolean;
 
 export interface RuleEvaluator<T> {
-  evaluate<K>(rules:Rule<T>[], ...obj : Observable<T>[]):Observable<EvaluatedRule<T>[]>
+  evaluate<K>(rules:RuleSet<T>, ...obj : Observable<T>[]):Observable<Result<T>[]>
 }
