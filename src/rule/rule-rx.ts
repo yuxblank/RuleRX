@@ -33,7 +33,7 @@ export class RuleRx<T> implements RuleEvaluator<T> {
     }
 
    if (rules.any){
-     contexts.forEach(
+     contexts.map(
        context => {
          // @ts-ignore
          let evaluateRule = this.evaluateRulesOnContext(rules.any, context);

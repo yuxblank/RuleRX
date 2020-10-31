@@ -1,5 +1,5 @@
 import {RuleRx} from "../src/rule/rule-rx";
-import {anyOf, equal, greaterOrEqThan, greaterThan} from "../src/rule/operators";
+import {anyOf, equal, greaterOrEqThan, greaterThan, lessOrEqThan} from "../src/rule/operators";
 import {BehaviorSubject, of} from "rxjs";
 import {filter, finalize, flatMap, map, mergeMap, tap} from "rxjs/operators";
 
@@ -17,8 +17,8 @@ describe("RuleRX", () => {
             {
               fact: "surname is equal to Doe",
               operator: equal,
-              path: "$.name",
-              value: "Jhon"
+              path: "$.surname",
+              value: "Doe"
             }
 
           ]
@@ -71,6 +71,91 @@ describe("RuleRX", () => {
       }
     )
   })
+
+  it("RuleRX can evaluate a rule and output the element and the fact only when one of the conditions are met", (done) => {
+
+    let count = 0;
+    new RuleRx<{price: number, product:string}>().evaluate(
+      {
+        any:[{
+          fact: "price is greater than 10",
+          operator: greaterOrEqThan,
+          path: "$.price",
+          value: 10
+        },
+          {
+            fact: "price is less or equal than 0",
+            operator: lessOrEqThan,
+            path: "$.price",
+            value: 0
+          }
+        ]},
+      of(
+        {price: 5,product: "productWithPrice5"}
+      ),
+      of({
+        price : 10, product: "productWithPrice10"
+      }),
+      of({
+        price : 100, product: "productWithPrice100"
+      }),
+      of({
+        price : 149, product: "productWithPrice149"
+      })
+    ).
+    pipe(
+      tap(x => count++)
+    ).subscribe(
+      next => {
+        expect(next.length).toEqual(3);
+        done();
+      }
+    )
+  })
+
+
+  it("RuleRX can evaluate a rule and output the element and the fact only when none of the conditions are met", (done) => {
+
+    let count = 0;
+    new RuleRx<{price: number, product:string}>().evaluate(
+      {
+        none:[{
+          fact: "price is greater than 10",
+          operator: greaterOrEqThan,
+          path: "$.price",
+          value: 10
+        },
+          {
+            fact: "price is less or equal than 0",
+            operator: lessOrEqThan,
+            path: "$.price",
+            value: 0
+          }
+        ]},
+      of(
+        {price: 5,product: "productWithPrice5"}
+      ),
+      of({
+        price : 10, product: "productWithPrice10"
+      }),
+      of({
+        price : 100, product: "productWithPrice100"
+      }),
+      of({
+        price : 149, product: "productWithPrice149"
+      })
+    ).
+    pipe(
+      tap(x => count++)
+    ).subscribe(
+      next => {
+        expect(next.length).toEqual(1);
+        expect(next[0].element.product).toEqual("productWithPrice5");
+        done();
+      }
+    )
+  })
+
 
   it("RuleRX can evaluate multiple rules and return elements only when rules are met", (done) => {
 
