@@ -25,7 +25,7 @@ export class RuleRx<T> implements RuleEvaluator<T> {
             rules: evaluateRule
           })
         }
-      })
+      0})
     }
 
     if (rules.any) {

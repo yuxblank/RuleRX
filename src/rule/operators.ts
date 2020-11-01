@@ -62,3 +62,7 @@ export function noneOfList(object: any[], value: any[]): boolean {
     ).length === object.length
   )
 }
+
+export function sumGreaterThan(object: any[], value: any[]): boolean{
+  return object.reduce((a, b) => a + b, 0) > value;
+}
