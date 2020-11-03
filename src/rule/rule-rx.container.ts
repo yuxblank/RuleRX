@@ -1,10 +1,4 @@
-import {
-  Operator,
-  RuleConfiguration,
-  RuleEvaluatorContainer,
-  RuleEvaluatorContainerException,
-  RuleSet
-} from './rule-api'
+import { Operator, RuleConfiguration, RuleEvaluatorContainer, RuleSet } from './rule-api'
 import {
   allOf,
   allOfList,
@@ -75,4 +69,10 @@ export const RuleRxContainerFactory = () => {
   operators.set('noneOfList', noneOfList)
   operators.set('sumGreaterThan', sumGreaterThan)
   return new RuleRxContainer(operators, new Map<string, RuleConfiguration<any>>())
+}
+
+export class RuleEvaluatorContainerException extends Error {
+  constructor(message: string) {
+    super(message)
+  }
 }

@@ -43,9 +43,3 @@ export interface RuleEvaluatorContainer {
   addOperator<T>(name: string, operator: Operator<T>): void
   getOperator<T>(name: string): Operator<T>
 }
-
-export class RuleEvaluatorContainerException extends Error {
-  constructor(message: string) {
-    super(message)
-  }
-}
