@@ -1,7 +1,7 @@
 import { RuleRx } from '../src/rule/rule-rx'
 import { anyOf, equal, greaterOrEqThan, greaterThan, lessOrEqThan } from '../src/rule/operators'
 import { BehaviorSubject, of } from 'rxjs'
-import { concatMap, filter, finalize, flatMap, map, mergeMap, tap } from 'rxjs/operators'
+import { concatMap, filter, finalize, flatMap, map, mergeAll, mergeMap, tap } from 'rxjs/operators'
 
 describe('RuleRX', () => {
   it('RuleRX can evaluate multiple rules on an observable array of the object', done => {
@@ -300,6 +300,48 @@ describe('RuleRX', () => {
       )
       .subscribe(next => {
         expect(count).toEqual(1)
+        done()
+      })
+  })
+
+  it('RuleRX can evaluate multiple rules on different root cases', done => {
+    let observable = new RuleRx<{ name: string; surname: string; age: number }>()
+      .evaluate(
+        {
+          all: [
+            {
+              fact: 'name is equal to Jhon',
+              operator: equal,
+              path: '$.name',
+              value: 'Jhon'
+            },
+            {
+              fact: 'surname is equal to Doe',
+              operator: equal,
+              path: '$.surname',
+              value: 'Doe'
+            }
+          ],
+          none: [
+            {
+              fact: 'Age is greater than 20',
+              path: '$.age',
+              operator: greaterThan,
+              value: 20
+            }
+          ]
+        },
+        of({ name: 'Jhon', surname: 'Doe', age: 10 }, { name: 'Jhon', surname: 'Frank', age: 22 })
+      )
+      .pipe(mergeMap(p => p))
+
+    observable
+      .pipe(
+        map(o => o.rules.filter(r => r.fact === 'Age is greater than 20')),
+        mergeAll()
+      )
+      .subscribe(next => {
+        expect(next.element.surname).toEqual('Doe')
         done()
       })
   })
