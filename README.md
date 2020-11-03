@@ -5,7 +5,7 @@
 A library for rule evaluation written in Typescript that enables the reactive 
 approach (with Rx.js) on business objects.
 
-## The reactive RuleEngine library
+## The Reactive RuleEngine library
 
 The engine allow evaluating rules that are defined as object streams representing a 
 scenario.
@@ -20,6 +20,16 @@ observable stream of emitted results whenever there's a match.
 
 Context observables can emit new values over time, and the rules will be streamed any
 time your business context changes.
+
+## Features
+
+- Schemaless object nodes traversal using JsonPath
+- Support custom operators and embedded operators
+- Support for serialized rules to be evaluated
+- I/O as observable streams (Rx.js)
+- Easy rule definition for business/functional approach
+- Supported for both Node.js and the Browser
+- Small footprint
 
 
 
