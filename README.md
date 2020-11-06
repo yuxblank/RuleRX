@@ -32,12 +32,76 @@ time your business context changes.
 
 ## Getting started
 
-### Install the library:
-With NPM:
+### Installing the library:
+with npm:
 ```shell script
 npm i rulerx
 ```
 
+### Writing basic rule
+
+First, let's define one model of our context.
+
+```ts
+class Person {name: string; surname: string }
+```
+
+Then lets defines our rule sets:
+
+```ts
+const rules: RuleSet<Person>[] = [
+       {
+         all: [ // match all these rules
+           {
+             fact: 'name is equal to Jhon', // describe the fact
+             operator: equal, // the operator
+             path: '$.name', // the jsonPath of the node
+             value: 'Jhon' // the expected value
+           },
+           {
+             fact: 'surname is equal to Doe',
+             operator: equal,
+             path: '$.surname',
+             value: 'Doe'
+           }
+         ]
+       }
+     ]
+```
+
+Create some Persons observables for the context
+
+```ts
+const persona: Person = {
+    name : "Jhon",
+    surname: "Doe"
+}
+const persona2: Person = {
+    name : "Ada",
+    surname: "Lovelace"
+}
+const observable: Observable<Person> = of(persona);
+const observable2: Observable<Person> = of(persona2);
+```
+
+Now it's time to evaluate our context!
+
+```ts
+new RuleRx<Person>()
+      .evaluate(rules, observable, observable2)
+      .pipe(mergeAll())
+      .subscribe(next => {
+            console.log(next.element);
+      })
+```
+
+This will emit :
+```
+{
+    name : "Jhon",
+    surname: "Doe"
+}
+```
 
 
 
