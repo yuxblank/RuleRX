@@ -39,16 +39,18 @@ describe('RuleRX functional uses cases', () => {
 
     new RuleRx<Basket>()
       .evaluate(
-        {
-          all: [
-            {
-              fact: 'user cart sum is beyond 100',
-              operator: sumGreaterThan,
-              path: '$.products..price',
-              value: 100
-            }
-          ]
-        },
+        [
+          {
+            all: [
+              {
+                fact: 'user cart sum is beyond 100',
+                operator: sumGreaterThan,
+                path: '$.products..price',
+                value: 100
+              }
+            ]
+          }
+        ],
         ...carts
       )
       .pipe(

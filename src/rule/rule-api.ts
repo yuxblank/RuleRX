@@ -29,17 +29,17 @@ export interface RuleSet<T> {
 export type Operator<T> = (object: T[] | Value[], value: Value | any) => boolean
 
 export interface RuleEvaluator<T> {
-  evaluate<K>(rules: RuleSet<T> | string, ...obj: Observable<T>[]): Observable<Result<T>[]>
+  evaluate<K>(rules: RuleSet<T>[] | string, ...obj: Observable<T>[]): Observable<Result<T>[]>
 }
 
 export interface RuleConfiguration<T> {
   name: string
-  rules: RuleSet<T>
+  rules: RuleSet<T>[]
 }
 
 export interface RuleEvaluatorContainer {
   addRuleConfiguration<T>(config: RuleConfiguration<T>): void
-  getRuleConfiguration(name: string): RuleSet<any>
+  getRuleConfiguration(name: string): RuleSet<any>[]
   addOperator<T>(name: string, operator: Operator<T>): void
   getOperator<T>(name: string): Operator<T>
 }

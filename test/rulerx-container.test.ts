@@ -3,11 +3,45 @@ import { anyOf, equal, greaterOrEqThan, greaterThan, lessOrEqThan } from '../src
 import { BehaviorSubject, of } from 'rxjs'
 import { concatMap, filter, finalize, flatMap, map, mergeAll, mergeMap, tap } from 'rxjs/operators'
 import { RuleRxContainerFactory } from '../src/rule/rule-rx.container'
+import { RuleEvaluatorContainer } from '../src/rule/rule-api'
 
 describe('RuleRX with json Rules', () => {
   it('RuleRX can resolve operators as string when registered to a container', done => {
     new RuleRx<{ name: string; surname: string }>(RuleRxContainerFactory())
       .evaluate(
+        [
+          {
+            all: [
+              {
+                fact: 'name is equal to jhon',
+                operator: 'equal',
+                path: '$.name',
+                value: 'Jhon'
+              },
+              {
+                fact: 'surname is equal to Doe',
+                operator: 'equal',
+                path: '$.surname',
+                value: 'Doe'
+              }
+            ]
+          }
+        ],
+        of({ name: 'Jhon', surname: 'Doe' }, { name: 'Jhon', surname: 'Frank' })
+      )
+      .pipe(mergeMap(p => p))
+      .subscribe(next => {
+        expect(next.element.surname).toEqual('Doe')
+        done()
+      })
+  })
+
+  it('RuleRX can use rule set by string name when registered to a container', done => {
+    let ruleRxContainer = RuleRxContainerFactory()
+
+    ruleRxContainer.addRuleConfiguration({
+      name: 'ExampleRule',
+      rules: [
         {
           all: [
             {
@@ -23,37 +57,8 @@ describe('RuleRX with json Rules', () => {
               value: 'Doe'
             }
           ]
-        },
-        of({ name: 'Jhon', surname: 'Doe' }, { name: 'Jhon', surname: 'Frank' })
-      )
-      .pipe(mergeMap(p => p))
-      .subscribe(next => {
-        expect(next.element.surname).toEqual('Doe')
-        done()
-      })
-  })
-
-  it('RuleRX can use rule set by string name when registered to a container', done => {
-    let ruleRxContainer = RuleRxContainerFactory()
-
-    ruleRxContainer.addRuleConfiguration({
-      name: 'ExampleRule',
-      rules: {
-        all: [
-          {
-            fact: 'name is equal to jhon',
-            operator: 'equal',
-            path: '$.name',
-            value: 'Jhon'
-          },
-          {
-            fact: 'surname is equal to Doe',
-            operator: 'equal',
-            path: '$.surname',
-            value: 'Doe'
-          }
-        ]
-      }
+        }
+      ]
     })
 
     new RuleRx<{ name: string; surname: string }>(ruleRxContainer)
@@ -69,27 +74,33 @@ describe('RuleRX with json Rules', () => {
   })
 
   it('RuleRX throw an exception when using an operators not registered into the container', done => {
-    let ruleRxContainer = RuleRxContainerFactory()
+    let ruleRxContainer: RuleEvaluatorContainer = RuleRxContainerFactory()
 
     ruleRxContainer.addRuleConfiguration({
       name: 'ExampleRule',
-      rules: {
-        all: [
-          {
-            fact: 'name is equal to jhon',
-            operator: 'NotExistingOperator',
-            path: '$.name',
-            value: 'Jhon'
-          },
-          {
-            fact: 'surname is equal to Doe',
-            operator: 'equal',
-            path: '$.surname',
-            value: 'Doe'
-          }
-        ]
-      }
+      rules: [
+        {
+          all: [
+            {
+              fact: 'name is equal to jhon',
+              operator: 'NotExistingOperator',
+              path: '$.name',
+              value: 'Jhon'
+            },
+            {
+              fact: 'surname is equal to Doe',
+              operator: 'equal',
+              path: '$.surname',
+              value: 'Doe'
+            }
+          ]
+        }
+      ]
     })
+
+    expect(() => {
+      ruleRxContainer.getOperator('NotExistingOperator')
+    }).toThrowError()
 
     new RuleRx<{ name: string; surname: string }>(ruleRxContainer)
       .evaluate(
@@ -112,23 +123,29 @@ describe('RuleRX with json Rules', () => {
 
     ruleRxContainer.addRuleConfiguration({
       name: 'ExampleRule',
-      rules: {
-        all: [
-          {
-            fact: 'name is equal to jhon',
-            operator: 'NotExistingOperator',
-            path: '$.name',
-            value: 'Jhon'
-          },
-          {
-            fact: 'surname is equal to Doe',
-            operator: 'equal',
-            path: '$.surname',
-            value: 'Doe'
-          }
-        ]
-      }
+      rules: [
+        {
+          all: [
+            {
+              fact: 'name is equal to jhon',
+              operator: 'NotExistingOperator',
+              path: '$.name',
+              value: 'Jhon'
+            },
+            {
+              fact: 'surname is equal to Doe',
+              operator: 'equal',
+              path: '$.surname',
+              value: 'Doe'
+            }
+          ]
+        }
+      ]
     })
+
+    expect(() => {
+      ruleRxContainer.getRuleConfiguration('NotExisting')
+    }).toThrowError()
 
     new RuleRx<{ name: string; surname: string }>(ruleRxContainer)
       .evaluate(
@@ -155,16 +172,18 @@ describe('RuleRX with json Rules', () => {
 
     ruleRxContainer.addRuleConfiguration({
       name: 'ExampleRule',
-      rules: {
-        all: [
-          {
-            fact: 'name is equal to jhon',
-            operator: 'customOperator',
-            path: '$.name',
-            value: 'Hoooray!'
-          }
-        ]
-      }
+      rules: [
+        {
+          all: [
+            {
+              fact: 'name is equal to jhon',
+              operator: 'customOperator',
+              path: '$.name',
+              value: 'Hoooray!'
+            }
+          ]
+        }
+      ]
     })
 
     new RuleRx<{ name: string; surname: string }>(ruleRxContainer)

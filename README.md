@@ -29,7 +29,17 @@ time your business context changes.
 - I/O as observable streams (Rx.js)
 - Easy rule definition for business/functional approach
 - Supported for both Node.js and the Browser
-- Small footprint
+
+## Getting started
+
+### Install the library:
+With NPM:
+```shell script
+npm i rulerx
+```
+
+
+
 
 
 

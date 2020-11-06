@@ -45,7 +45,7 @@ export class RuleRxContainer implements RuleEvaluatorContainer {
     return this.operators.get(name)
   }
 
-  getRuleConfiguration(name: string): RuleSet<any> {
+  getRuleConfiguration(name: string): RuleSet<any>[] {
     if (!this.ruleConfigurations.has(name)) {
       throw new RuleEvaluatorContainerException(`rule ${name} is not registered`)
     }
