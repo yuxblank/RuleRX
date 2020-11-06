@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/yuxblank/RuleRX.svg?branch=master)](https://travis-ci.org/yuxblank/RuleRX)
 [![Coverage Status](https://coveralls.io/repos/github/yuxblank/RuleRX/badge.svg?branch=master)](https://coveralls.io/github/yuxblank/RuleRX?branch=master)
-
+![](./assets/logo.png)
 # RuleRx
 A library for rule evaluation written in Typescript that enables the reactive 
 approach (with Rx.js) on business objects.
