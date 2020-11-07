@@ -38,15 +38,15 @@ with npm:
 npm i rulerx
 ```
 
-### Writing basic rule
+### Writing basic rules
 
-First, let's define one model of our context.
+First, let's define one model of our context
 
 ```ts
-class Person {name: string; surname: string }
+interface Person {name: string; surname: string }
 ```
 
-Then lets defines our rule sets:
+Then we define our rule sets
 
 ```ts
 const rules: RuleSet<Person>[] = [
@@ -95,7 +95,7 @@ new RuleRx<Person>()
       })
 ```
 
-This will emit :
+Since only *Jhon Doe* match **all** the rules (equal $.name && equal $.surname) this will emit:
 ```
 {
     name : "Jhon",
